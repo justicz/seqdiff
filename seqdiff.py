@@ -17,7 +17,13 @@ def grab_seq(l):
         print("Invalid line in input file: '{}'".format(l))
         sys.exit(-1)
     seq_to_end = l[SEQ_OFFSET:]
-    return seq_to_end[:seq_to_end.index(" ")]
+    space_offset = seq_to_end.index(" ")
+    parsed_seq = seq_to_end[:space_offset]
+    parsed_len = int(seq_to_end[space_offset:])
+    if len(parsed_seq) != parsed_len:
+        print("Got wrong len for seq: {} != {}".format(len(parsed_seq), parsed_len))
+        sys.exit(-1)
+    return parsed_seq
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
