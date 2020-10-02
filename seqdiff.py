@@ -82,4 +82,4 @@ if __name__ == "__main__":
         for j in sorted(order):
             for k in sorted(order[j]):
                 fout.write("{},{}\n".format(k, hist[k]))
-        print("wrote {} lines".format(len(order)))
+        print("wrote {} lines".format(len(hist)))
