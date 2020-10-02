@@ -49,6 +49,7 @@ if __name__ == "__main__":
             seq = grab_seq(l)
             if len(seq) != len(ref):
                 print("line {} had different seq len than ref: {} != {}", i, len(seq), len(ref))
+                sys.exit(-1)
 
             # Find differences:
             for j, c in enumerate(seq):
