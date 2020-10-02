@@ -69,7 +69,7 @@ if __name__ == "__main__":
                     key = "{}{}{}".format(ref[j], j + 1, c)
 
                     # If we haven't seen a key before, allocate a count, and
-                    # remember what order we saw it in
+                    # remember it for a secondary sort
                     if hist.get(key, None) is None:
                         hist[key] = 1
                         order[j].append(key)
@@ -80,6 +80,6 @@ if __name__ == "__main__":
     # Write out the histogram
     with open(sys.argv[2], "w") as fout:
         for j in sorted(order):
-            for k in order[j]:
+            for k in sorted(order[j]):
                 fout.write("{},{}\n".format(k, hist[k]))
         print("wrote {} lines".format(len(order)))
