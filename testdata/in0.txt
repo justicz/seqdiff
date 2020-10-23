@@ -1,0 +1,5 @@
+Ref ABC 3
+XXX-..X 3
+YYY-..X 3
+YYY-..Z 3
+YYY-X.Z 3
