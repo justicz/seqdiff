@@ -3,5 +3,5 @@
 ## Usage
 
 ```
-./seqdiff.py in.txt out.csv
+./seqdiff.py in_0.txt ... in_n.txt out.csv
 ```
