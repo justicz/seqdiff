@@ -56,7 +56,6 @@ if __name__ == "__main__":
         with open(fname) as fin:
             histograms[fname] = defaultdict(int)
             hist = histograms[fname]
-            found_ref = False
             ref = None
             for i, l in enumerate(fin):
                 # Strip whitespace
@@ -67,7 +66,7 @@ if __name__ == "__main__":
                     continue
 
                 # Grab reference sequence, ensure the same as previous files if any
-                if not found_ref:
+                if ref is None:
                     ref = grab_ref(l)
                     if master_ref is None:
                         # If this is the first file, remember as master reference
@@ -79,7 +78,6 @@ if __name__ == "__main__":
                         if ref != master_ref:
                             print("file {} had different ref than first file: {} != {}".format(fname, ref, master_ref))
                             sys.exit(-1)
-                    found_ref = True
                     continue
 
                 # Not a reference line, grab the sequence
