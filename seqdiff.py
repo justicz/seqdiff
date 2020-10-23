@@ -4,20 +4,30 @@ from collections import defaultdict
 import sys
 import os
 
-# Sequences start at byte 50 and run until a space
-SEQ_OFFSET = 50
+# Reference sequence must be first non blank line in file and start with these
+# bytes
+REF_TAG = "Ref"
 
-def grab_ref(l):
-    if len(l) < 3 or l[:3] != "Ref":
+# Returns (reference sequence, tag len) where reference sequence is the
+# sequence we are comparing mutations to, and tag len is the length of all the
+# sequence names in this file
+def grab_ref_and_tag_len(l):
+    if len(l) < len(REF_TAG) or l[:len(REF_TAG)] != REF_TAG:
         print("Invalid ref line in input file: '{}'".format(l))
         sys.exit(-1)
-    return grab_seq(l)
 
-def grab_seq(l):
-    if len(l) < SEQ_OFFSET:
+    # Calculate tag len. Usually 50, sometimes different
+    tag_len = len(REF_TAG)
+    while tag_len < len(l) and l[tag_len] == " ":
+        tag_len += 1
+
+    return grab_seq(l, tag_len), tag_len
+
+def grab_seq(l, tag_len):
+    if len(l) < tag_len:
         print("Invalid line in input file: '{}'".format(l))
         sys.exit(-1)
-    seq_to_end = l[SEQ_OFFSET:]
+    seq_to_end = l[tag_len:]
     space_offset = seq_to_end.index(" ")
     parsed_seq = seq_to_end[:space_offset]
     parsed_len = int(seq_to_end[space_offset:])
@@ -57,6 +67,7 @@ if __name__ == "__main__":
             histograms[fname] = defaultdict(int)
             hist = histograms[fname]
             ref = None
+            tag_len = None
             for i, l in enumerate(fin):
                 # Strip whitespace
                 l = l.rstrip()
@@ -66,8 +77,9 @@ if __name__ == "__main__":
                     continue
 
                 # Grab reference sequence, ensure the same as previous files if any
+                # (ref sequence must be first non-blank line in file)
                 if ref is None:
-                    ref = grab_ref(l)
+                    ref, tag_len = grab_ref_and_tag_len(l)
                     if master_ref is None:
                         # If this is the first file, remember as master reference
                         master_ref = ref
@@ -81,7 +93,7 @@ if __name__ == "__main__":
                     continue
 
                 # Not a reference line, grab the sequence
-                seq = grab_seq(l)
+                seq = grab_seq(l, tag_len)
                 if len(seq) != len(ref):
                     print("line {} had different seq len than ref: {} != {}", i, len(seq), len(ref))
                     sys.exit(-1)
@@ -111,6 +123,7 @@ if __name__ == "__main__":
         fout.write("\n")
 
         # For each position (sorted low to high)
+        muts = 0
         for p in sorted(positions):
             # For each mutation at a given position that we've seen (sorted alphabetically)
             for mut in sorted(positions[p]):
@@ -120,3 +133,5 @@ if __name__ == "__main__":
                         # Write out how many times that mutation appeared in each file
                         fout.write(",{}".format(histograms[fname][mut]))
                 fout.write("\n")
+                muts += 1
+        print("wrote data for {} mutations across {} files".format(muts, len(filenames)))
