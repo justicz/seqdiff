@@ -1,5 +1,5 @@
-Ref ABC 3
-XXX-..Z 3
-YYY-..Z 3
-YYY-..A 3
-YYY-B.A 3
+Ref  ABC 3
+XXXX-..Z 3
+YYYX-..Z 3
+YYYX-..A 3
+YYYX-B.A 3
